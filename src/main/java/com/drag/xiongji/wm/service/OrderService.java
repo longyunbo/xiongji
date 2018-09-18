@@ -8,9 +8,11 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -258,6 +260,7 @@ public class OrderService {
 				orderInfoDao.save(order);
 				
 				List<OrderDetailForm> orderList = form.getOrderDetail();
+				Set<Integer> ids = new HashSet<Integer>();
 				if(orderList != null && orderList.size() > 0) {
 					for(OrderDetailForm detail : orderList) {
 						//插入订单详情
@@ -278,6 +281,7 @@ public class OrderService {
 						orderDetail.setType(type);
 						orderDetail.setCreateTime(new Timestamp(System.currentTimeMillis()));
 						orderDetail.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+						ids.add(dGoodsId);
 						orderDetailDao.save(orderDetail);
 					}
 				}else {
@@ -296,7 +300,7 @@ public class OrderService {
 				}
 				
 				//新增购买人数次数
-				this.addSuccTimes(goods);
+				this.addSuccTimes(ids);
 				
 				resp.setReturnCode(Constant.SUCCESS);
 				resp.setErrorMessage("下单成功!");
@@ -520,10 +524,8 @@ public class OrderService {
 	 * @param goods
 	 * @param number
 	 */
-	public void addSuccTimes(ProductInfo goods) {
-		int succTimes = goods.getSuccTimes();
-		goods.setSuccTimes(succTimes + 1);
-		productInfoDao.saveAndFlush(goods);
+	public void addSuccTimes(Set<Integer> ids) {
+		productInfoDao.updateSuccTimes(ids);
 	}
 	
 	/**

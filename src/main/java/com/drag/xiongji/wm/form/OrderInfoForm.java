@@ -99,6 +99,10 @@ public class OrderInfoForm {
 	 * -------点我达所需参数------------
 	 */
 	/**
+	 * 门店编号，门店创建后可在门店列表和单页查看
+	 */
+	private String shop_no;
+	/**
 	 * 订单备注
 	 */
 	private String order_remark;
